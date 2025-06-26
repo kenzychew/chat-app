@@ -1,20 +1,29 @@
-import React, { useState } from 'react';
+import React from 'react';
 import ThreadList from '@/components/chat/ThreadList';
 import MessageList from '@/components/chat/MessageList';
 import MessageInput from '@/components/chat/MessageInput';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-import { mockThreads, mockMessages, mockUsers, currentUser } from '@/utils/mockData';
+import { Button } from '@/components/ui/button';
+import { useChat } from '@/hooks/useChat';
 
 const ChatLayout = () => {
-  const [activeThreadId, setActiveThreadId] = useState('thread-1');
+  const {
+    threads,
+    messages,
+    activeThreadId,
+    users,
+    currentUser,
+    sendMessage,
+    selectThread,
+    clearChat,
+  } = useChat();
   
-  const activeThread = mockThreads.find(t => t.id === activeThreadId);
-  const activeMessages = mockMessages[activeThreadId] || [];
+  const activeThread = threads.find(t => t.id === activeThreadId);
+  const activeMessages = messages[activeThreadId] || [];
   const otherUser = activeThread?.participants.find(p => p.id !== currentUser.id);
 
   const handleSendMessage = (content) => {
-    // TODO: Add message sending logic in Phase 2
-    console.log('Sending message:', content);
+    sendMessage(content);
   };
 
   return (
@@ -23,23 +32,33 @@ const ChatLayout = () => {
       <div className="w-80 bg-white border-r border-gray-200 flex flex-col">
         {/* Sidebar Header */}
         <div className="p-4 border-b border-gray-200">
-          <div className="flex items-center space-x-3">
-            <Avatar className="h-10 w-10">
-              <AvatarImage src={currentUser.avatar} alt={currentUser.name} />
-              <AvatarFallback>{currentUser.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
-            </Avatar>
-            <div>
-              <h1 className="text-lg font-semibold text-gray-900">Messages</h1>
-              <p className="text-sm text-gray-500">#{currentUser.name}</p>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <Avatar className="h-10 w-10">
+                <AvatarImage src={currentUser.avatar} alt={currentUser.name} />
+                <AvatarFallback>{currentUser.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+              </Avatar>
+              <div>
+                <h1 className="text-lg font-semibold text-gray-900">Messages</h1>
+                <p className="text-sm text-gray-500">#{currentUser.name}</p>
+              </div>
             </div>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={clearChat}
+              className="text-xs"
+            >
+              Reset
+            </Button>
           </div>
         </div>
 
         {/* Thread List */}
         <ThreadList
-          threads={mockThreads}
+          threads={threads}
           activeThreadId={activeThreadId}
-          onThreadSelect={setActiveThreadId}
+          onThreadSelect={selectThread}
         />
       </div>
 
@@ -64,7 +83,7 @@ const ChatLayout = () => {
         )}
 
         {/* Messages Area */}
-        <MessageList messages={activeMessages} users={mockUsers} />
+        <MessageList messages={activeMessages} users={users} />
 
         {/* Message Input */}
         <MessageInput onSendMessage={handleSendMessage} />
