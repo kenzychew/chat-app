@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Send, Loader2 } from 'lucide-react';
+import { SendHorizontal, Loader2 } from 'lucide-react';
 
 const MessageInput = ({ onSendMessage, disabled = false }) => {
   const [message, setMessage] = useState('');
@@ -44,7 +44,7 @@ const MessageInput = ({ onSendMessage, disabled = false }) => {
           {isSending ? (
             <Loader2 className="h-4 w-4 animate-spin" />
           ) : (
-            <Send className="h-4 w-4" />
+            <SendHorizontal className="h-4 w-4" />
           )}
         </Button>
       </form>

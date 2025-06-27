@@ -174,6 +174,46 @@ export const useChat = () => {
     setMessages(mockMessages);
   };
 
+  // Handle emoji reactions on messages - users can add, change, or remove reactions
+  const addReaction = (messageId, emoji, remove = false) => {
+    setMessages((prev) => {
+      const updated = { ...prev };
+      Object.keys(updated).forEach((threadId) => {
+        updated[threadId] = updated[threadId].map((msg) => {
+          if (msg.id === messageId) {
+            const reactions = msg.reactions || [];
+
+            if (remove) {
+              // User clicked their existing reaction - remove it
+              return {
+                ...msg,
+                reactions: reactions.filter((r) => !(r.userId === currentUser.id && r.emoji === emoji)),
+              };
+            } else {
+              // User selected a new reaction - replace any existing reaction from this user
+              const filteredReactions = reactions.filter((r) => r.userId !== currentUser.id);
+
+              // Add the new reaction
+              return {
+                ...msg,
+                reactions: [
+                  ...filteredReactions,
+                  {
+                    userId: currentUser.id,
+                    emoji,
+                    timestamp: new Date(),
+                  },
+                ],
+              };
+            }
+          }
+          return msg;
+        });
+      });
+      return updated;
+    });
+  };
+
   return {
     threads,
     messages,
@@ -185,5 +225,6 @@ export const useChat = () => {
     clearChat,
     typingUsers,
     simulateTyping,
+    addReaction,
   };
 };

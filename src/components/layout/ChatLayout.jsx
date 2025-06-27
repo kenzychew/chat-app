@@ -18,6 +18,7 @@ const ChatLayout = () => {
     selectThread,
     clearChat,
     typingUsers,
+    addReaction,
   } = useChat();
   
   const activeThread = threads.find(t => t.id === activeThreadId);
@@ -72,23 +73,33 @@ const ChatLayout = () => {
         {activeThread && (
           <div className="h-16 bg-white border-b border-gray-200 flex items-center px-6">
             <div className="flex items-center space-x-3">
-              <Avatar className="h-8 w-8">
-                <AvatarImage src={otherUser.avatar} alt={otherUser.name} />
-                <AvatarFallback>{otherUser.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
-              </Avatar>
+              {/* Avatar with online/typing status indicator */}
+              <div className="relative">
+                <Avatar className="h-8 w-8">
+                  <AvatarImage src={otherUser.avatar} alt={otherUser.name} />
+                  <AvatarFallback>{otherUser.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+                </Avatar>
+                {/* Status indicator: typing animation, online dot, or nothing if offline */}
+                <div className="absolute bottom-0 right-0 h-3 w-3 bg-white border border-gray-200 rounded-full flex items-center justify-center">
+                  {isOtherUserTyping ? (
+                    <TypingIndicator isTyping={true} size="xs" />
+                  ) : otherUser.isOnline ? (
+                    <div className="h-2 w-2 bg-green-500 rounded-full"></div>
+                  ) : null}
+                </div>
+              </div>
               <div>
                 <h2 className="text-lg font-medium text-gray-900">{otherUser.name}</h2>
                 <div className="flex items-center space-x-2">
                   <p className="text-sm text-gray-500">
                     {isOtherUserTyping ? (
-                      <span className="italic">typing</span>
+                      <span className="italic">typing...</span>
                     ) : otherUser.isOnline ? (
                       'Online'
                     ) : (
                       'Offline'
                     )}
                   </p>
-                  {isOtherUserTyping && <TypingIndicator isTyping={true} />}
                 </div>
               </div>
             </div>
@@ -96,7 +107,7 @@ const ChatLayout = () => {
         )}
 
         {/* Messages Area */}
-        <MessageList messages={activeMessages} users={users} />
+        <MessageList messages={activeMessages} users={users} onAddReaction={addReaction} />
 
         {/* Message Input */}
         <MessageInput onSendMessage={handleSendMessage} />

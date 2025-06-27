@@ -70,6 +70,7 @@ export const mockMessages = {
       timestamp: new Date(Date.now() - 5 * 60 * 1000),
       type: "text",
       status: "read",
+      reactions: [{ userId: "user-1", emoji: "👍", timestamp: new Date(Date.now() - 4 * 60 * 1000) }],
     },
   ],
   "thread-2": [
@@ -92,6 +93,10 @@ export const mockMessages = {
       timestamp: new Date(Date.now() - 30 * 60 * 1000),
       type: "text",
       status: "sent",
+      reactions: [
+        { userId: "user-1", emoji: "❤️", timestamp: new Date(Date.now() - 25 * 60 * 1000) },
+        { userId: "user-2", emoji: "👍", timestamp: new Date(Date.now() - 20 * 60 * 1000) },
+      ],
     },
   ],
   "thread-4": [
