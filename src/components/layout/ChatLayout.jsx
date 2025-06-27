@@ -5,6 +5,7 @@ import MessageInput from '@/components/chat/MessageInput';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { useChat } from '@/hooks/useChat';
+import TypingIndicator from '@/components/chat/TypingIndicator';
 
 const ChatLayout = () => {
   const {
@@ -16,11 +17,13 @@ const ChatLayout = () => {
     sendMessage,
     selectThread,
     clearChat,
+    typingUsers,
   } = useChat();
   
   const activeThread = threads.find(t => t.id === activeThreadId);
   const activeMessages = messages[activeThreadId] || [];
   const otherUser = activeThread?.participants.find(p => p.id !== currentUser.id);
+  const isOtherUserTyping = typingUsers[activeThreadId] && typingUsers[activeThreadId].length > 0;
 
   const handleSendMessage = (content) => {
     sendMessage(content);
@@ -59,6 +62,7 @@ const ChatLayout = () => {
           threads={threads}
           activeThreadId={activeThreadId}
           onThreadSelect={selectThread}
+          typingUsers={typingUsers}
         />
       </div>
 
@@ -74,9 +78,18 @@ const ChatLayout = () => {
               </Avatar>
               <div>
                 <h2 className="text-lg font-medium text-gray-900">{otherUser.name}</h2>
-                <p className="text-sm text-gray-500">
-                  {otherUser.isOnline ? 'Online' : 'Offline'}
-                </p>
+                <div className="flex items-center space-x-2">
+                  <p className="text-sm text-gray-500">
+                    {isOtherUserTyping ? (
+                      <span className="italic">typing</span>
+                    ) : otherUser.isOnline ? (
+                      'Online'
+                    ) : (
+                      'Offline'
+                    )}
+                  </p>
+                  {isOtherUserTyping && <TypingIndicator isTyping={true} />}
+                </div>
               </div>
             </div>
           </div>

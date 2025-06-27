@@ -34,6 +34,7 @@ export const useChat = () => {
   const [threads, setThreads] = useState([]);
   const [messages, setMessages] = useState({});
   const [activeThreadId, setActiveThreadId] = useState("thread-1");
+  const [typingUsers, setTypingUsers] = useState({});
 
   useEffect(() => {
     const { threads: loadedThreads, messages: loadedMessages } = loadChatState();
@@ -97,6 +98,20 @@ export const useChat = () => {
     });
   };
 
+  const simulateTyping = (threadId, userId) => {
+    setTypingUsers((prev) => ({
+      ...prev,
+      [threadId]: [...(prev[threadId] || []), userId],
+    }));
+
+    setTimeout(() => {
+      setTypingUsers((prev) => ({
+        ...prev,
+        [threadId]: (prev[threadId] || []).filter((id) => id !== userId),
+      }));
+    }, 2000 + Math.random() * 1000);
+  };
+
   const simulateResponse = (threadId) => {
     const responses = [
       "That's interesting!",
@@ -111,6 +126,9 @@ export const useChat = () => {
 
     const thread = threads.find((t) => t.id === threadId);
     const otherUser = thread.participants.find((p) => p.id !== currentUser.id);
+
+    // Start typing indicator
+    simulateTyping(threadId, otherUser.id);
 
     setTimeout(() => {
       const responseMessage = {
@@ -139,7 +157,7 @@ export const useChat = () => {
             : thread
         )
       );
-    }, 1000 + Math.random() * 2000);
+    }, 2000 + Math.random() * 1000); // Show typing for 2-3 seconds before response
   };
 
   const selectThread = (threadId) => {
@@ -165,5 +183,7 @@ export const useChat = () => {
     sendMessage,
     selectThread,
     clearChat,
+    typingUsers,
+    simulateTyping,
   };
 };

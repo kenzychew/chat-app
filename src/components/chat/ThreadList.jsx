@@ -3,8 +3,9 @@ import { Card } from '@/components/ui/card';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { formatDistanceToNow } from 'date-fns';
+import TypingIndicator from './TypingIndicator';
 
-const ThreadItem = ({ thread, isActive, onClick }) => {
+const ThreadItem = ({ thread, isActive, onClick, isTyping = false }) => {
   const otherUser = thread.participants.find(p => p.id !== 'user-1');
   
   return (
@@ -20,9 +21,13 @@ const ThreadItem = ({ thread, isActive, onClick }) => {
             <AvatarImage src={otherUser.avatar} alt={otherUser.name} />
             <AvatarFallback>{otherUser.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
           </Avatar>
-          {otherUser.isOnline && (
-            <div className="absolute bottom-0 right-0 h-3 w-3 bg-green-500 border-2 border-white rounded-full"></div>
-          )}
+          <div className="absolute bottom-0 right-0 h-3 w-3 bg-white border border-gray-200 rounded-full flex items-center justify-center">
+            {isTyping ? (
+              <TypingIndicator isTyping={true} size="xs" />
+            ) : otherUser.isOnline ? (
+              <div className="h-2 w-2 bg-green-500 rounded-full"></div>
+            ) : null}
+          </div>
         </div>
         
         <div className="flex-1 min-w-0">
@@ -45,8 +50,12 @@ const ThreadItem = ({ thread, isActive, onClick }) => {
           </div>
           
           {thread.lastMessage && (
-            <p className="text-sm text-gray-600 truncate mt-1">
-              {thread.lastMessage.content}
+            <p className="text-sm text-gray-600 truncate mt-1 text-left">
+              {isTyping ? (
+                <span className="italic text-gray-500">typing...</span>
+              ) : (
+                thread.lastMessage.content
+              )}
             </p>
           )}
         </div>
@@ -55,18 +64,22 @@ const ThreadItem = ({ thread, isActive, onClick }) => {
   );
 };
 
-const ThreadList = ({ threads, activeThreadId, onThreadSelect }) => {
+const ThreadList = ({ threads, activeThreadId, onThreadSelect, typingUsers = {} }) => {
   return (
     <div className="flex-1 overflow-y-auto">
       <div className="p-2 space-y-1">
-        {threads.map((thread) => (
-          <ThreadItem
-            key={thread.id}
-            thread={thread}
-            isActive={activeThreadId === thread.id}
-            onClick={onThreadSelect}
-          />
-        ))}
+        {threads.map((thread) => {
+          const isTyping = typingUsers[thread.id] && typingUsers[thread.id].length > 0;
+          return (
+            <ThreadItem
+              key={thread.id}
+              thread={thread}
+              isActive={activeThreadId === thread.id}
+              onClick={onThreadSelect}
+              isTyping={isTyping}
+            />
+          );
+        })}
       </div>
     </div>
   );
