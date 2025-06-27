@@ -33,7 +33,7 @@ const MessageInput = ({ onSendMessage, disabled = false }) => {
           onKeyDown={handleKeyDown}
           placeholder="Type a message..."
           className="flex-1"
-          disabled={disabled || isSending}
+          disabled={disabled}
         />
         <Button 
           type="submit" 
