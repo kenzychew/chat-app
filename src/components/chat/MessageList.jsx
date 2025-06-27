@@ -19,7 +19,7 @@ const MessageBubble = ({ message, user, isOwn }) => {
           ? 'bg-blue-500 text-white' 
           : 'bg-gray-100 text-gray-900'
       }`}>
-        <p className="text-sm">{message.content}</p>
+        <p className="text-sm text-left">{message.content}</p>
         
         <div className={`flex items-center justify-between mt-1 text-xs ${
           isOwn ? 'text-blue-100' : 'text-gray-500'
