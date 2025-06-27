@@ -107,7 +107,9 @@ const ChatLayout = () => {
         )}
 
         {/* Messages Area */}
-        <MessageList messages={activeMessages} users={users} onAddReaction={addReaction} />
+        <div className="flex-1 bg-gray-50">
+          <MessageList messages={activeMessages} users={users} onAddReaction={addReaction} />
+        </div>
 
         {/* Message Input */}
         <MessageInput onSendMessage={handleSendMessage} />

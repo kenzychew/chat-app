@@ -62,8 +62,8 @@ const MessageList = ({ messages, users, onAddReaction }) => {
   }, [messages]);
 
   return (
-    <ScrollArea className="flex-1 p-4" ref={scrollRef}>
-      <div className="space-y-4">
+    <ScrollArea className="flex-1" ref={scrollRef}>
+      <div className="p-4 space-y-4 min-h-full">
         {messages.map((message) => {
           const user = users[message.senderId];
           const isOwn = message.senderId === 'user-1';
